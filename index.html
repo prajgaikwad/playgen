@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Play Gen — AI Playlist Generator</title>
+  <meta name="description" content="Generate the perfect playlist from a single song using Spotify's music intelligence. Discover new music instantly." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══ LANDING PAGE ═══ -->
+  <div id="landing">
+    <!-- Animated Background -->
+    <div class="hero-bg">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+      <div class="grid-overlay"></div>
+    </div>
+
+    <!-- Floating bars (decorative) -->
+    <div class="bars-wrap" aria-hidden="true">
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div>
+    </div>
+
+    <!-- Landing Nav -->
+    <nav class="landing-nav">
+      <div class="nav-logo">
+        <div class="logo-icon">▶</div>
+        <span>Play Gen</span>
+      </div>
+    </nav>
+
+    <!-- Hero Content -->
+    <div class="landing-content">
+      <div class="hero-badge">✦ Powered by Spotify</div>
+
+      <h1 class="hero-title">
+        Turn one song into<br />
+        <span class="gradient-text">your perfect playlist</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        Search any track and instantly discover 20 perfectly matched songs
+        based on mood, tempo, and genre.
+      </p>
+
+      <!-- Feature Pills -->
+      <div class="feature-pills">
+        <div class="pill">🎵 20 Matched Tracks</div>
+        <div class="pill">⚡ Instant Results</div>
+        <div class="pill">🎧 30s Previews</div>
+        <div class="pill">🎨 Mood-Based</div>
+      </div>
+
+      <!-- CTA -->
+      <div class="landing-cta">
+        <button id="login-btn" class="btn-spotify" onclick="initiateLogin()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+          </svg>
+          Continue with Spotify
+        </button>
+        <p class="cta-hint">Free Spotify account required · Your data stays private</p>
+      </div>
+
+      <!-- Dev config warning (only shows if CLIENT_ID not set) -->
+      <div id="config-warning" class="config-warning hidden">
+        <span>⚙️</span>
+        <span>Set your <code>CLIENT_ID</code> in <code>app.js</code> to enable login.
+          <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noopener">Get one free →</a>
+        </span>
+      </div>
+    </div>
+
+    <!-- Landing Footer -->
+    <footer class="landing-footer">
+      <span>Play Gen is not affiliated with Spotify AB</span>
+      <span>·</span>
+      <a href="https://developer.spotify.com" target="_blank" rel="noopener">Spotify for Developers</a>
+    </footer>
+  </div>
+
+  <!-- ═══ MAIN APP (shown after login) ═══ -->
+  <div id="app" class="hidden">
+
+    <!-- NAVBAR -->
+    <nav id="navbar">
+      <div class="nav-inner">
+        <div class="nav-logo">
+          <div class="logo-icon">▶</div>
+          <span>Play Gen</span>
+        </div>
+        <div class="nav-actions">
+          <div id="user-profile" class="user-profile hidden">
+            <img id="user-avatar" src="" alt="User" />
+            <span id="user-name"></span>
+          </div>
+          <button class="btn-ghost" onclick="logout()">Logout</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- HERO / SEARCH SECTION -->
+    <section id="hero">
+      <div class="hero-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+      </div>
+      <div class="hero-content">
+        <div class="hero-badge">✦ Powered by Spotify</div>
+        <h1 class="hero-title">
+          Generate playlists from<br />
+          <span class="gradient-text">a single song</span>
+        </h1>
+        <p class="hero-subtitle">
+          Discover 20 perfectly matched tracks based on mood, tempo, and genre — instantly.
+        </p>
+        <div id="search-container">
+          <div id="search-bar" class="search-bar">
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="search-input" placeholder="Search for a song, artist, or album..." autocomplete="off" />
+            <button id="generate-btn" class="btn-generate" onclick="handleGenerate()">
+              <span>Generate</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+            </button>
+          </div>
+          <div id="suggestions" class="suggestions-dropdown hidden"></div>
+        </div>
+        <div id="recent-searches" class="recent-searches hidden">
+          <span class="recent-label">Recent:</span>
+          <div id="recent-chips" class="recent-chips"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTS SECTION -->
+    <section id="results" class="hidden">
+      <div class="results-inner">
+        <div id="seed-card" class="seed-card"></div>
+        <div class="playlist-header">
+          <div class="playlist-meta">
+            <h2 id="playlist-title">Your Playlist</h2>
+            <span id="playlist-subtitle" class="playlist-subtitle"></span>
+          </div>
+          <div class="playlist-actions">
+            <button class="btn-spotify" onclick="exportToSpotify()" id="export-btn" style="padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+              Save to Spotify
+            </button>
+            <button class="btn-ghost" onclick="copyPlaylist()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Copy Links
+            </button>
+            <button class="btn-ghost" onclick="resetApp()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+              New Search
+            </button>
+          </div>
+        </div>
+        <!-- Skeleton Grid -->
+        <div id="skeleton-grid" class="playlist-grid hidden">
+          <div class="skeleton-card"></div><div class="skeleton-card"></div>
+          <div class="skeleton-card"></div><div class="skeleton-card"></div>
+          <div class="skeleton-card"></div><div class="skeleton-card"></div>
+          <div class="skeleton-card"></div><div class="skeleton-card"></div>
+          <div class="skeleton-card"></div><div class="skeleton-card"></div>
+          <div class="skeleton-card"></div><div class="skeleton-card"></div>
+        </div>
+        <!-- Playlist Grid -->
+        <div id="playlist-grid" class="playlist-grid"></div>
+        <div id="playlist-footer" class="playlist-footer hidden">
+          <span id="duration-display"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ERROR STATE -->
+    <div id="error-state" class="error-state hidden">
+      <div class="error-icon">⚡</div>
+      <h3 id="error-title">Something went wrong</h3>
+      <p id="error-message">Please try again.</p>
+      <button class="btn-primary" onclick="resetApp()">Try Again</button>
+    </div>
+
+  </div><!-- /#app -->
+
+  <!-- TOAST -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
